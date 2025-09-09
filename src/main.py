@@ -12,11 +12,11 @@ from network_monitor.packet_analyzer import NetworkMonitor
 from host_monitor.system_monitor import HostMonitor
 from baseline_engine.behavior_analyzer import BaselineEngine
 from correlation_engine.event_correlator import CorrelationEngine
-# from alert_manager.alert_handler import AlertManager
-# from web_dashboard.app import create_app
-# from api.server import APIServer
-# from utils.config_loader import ConfigLoader
-# from utils.logger import setup_logging
+from alert_manager.alert_handler import AlertManager
+from web_dashboard.app import create_app
+from api.server import APIServer
+from utils.config_loader import ConfigLoader
+from utils.logger import setup_logging
 
 class MultiFactorIDS:
     def __init__(self, config_path: str = 'config/config.yaml'):
@@ -45,10 +45,10 @@ class MultiFactorIDS:
         self.logger.info('Initializing IDS components...')
         
         try:
-            # self.alert_manager = AlertManager(
-            #     config=self.config.set('alerts', {}),
-            #     shutdown_event=self.shutdown_event
-            # )
+            self.alert_manager = AlertManager(
+                config=self.config.set('alerts', {}),
+                shutdown_event=self.shutdown_event
+            )
             
             self.network_monitor = NetworkMonitor(
                 config=self.config.get('network', {}),
@@ -74,20 +74,20 @@ class MultiFactorIDS:
                 shutdown_event=self.shutdown_event
             )
             
-            # self.web_app = create_app(self.config.get('dashboard', {}))
+            self.web_app = create_app(self.config.get('dashboard', {}))
             
-            # self.api_server = APIServer(
-            #     config=self.config.get('api', {}),
-            #     ids_components={
-            #         'network_monitor': self.network_monitor,
-            #         'host_monitor': self.host_monitor,
-            #         'baseline_engine': self.baseline_engine,
-            #         'correlation_engine': self.correlation_engine,
-            #         'alert_manager': self.alert_manager
-            #     }
-            # )
+            self.api_server = APIServer(
+                config=self.config.get('api', {}),
+                ids_components={
+                    'network_monitor': self.network_monitor,
+                    'host_monitor': self.host_monitor,
+                    'baseline_engine': self.baseline_engine,
+                    'correlation_engine': self.correlation_engine,
+                    'alert_manager': self.alert_manager
+                }
+            )
             
-            # self.logger.info("All components initialized successfully")
+            self.logger.info("All components initialized successfully")
             
         except Exception as e:
             self.logger.error(f"Failed to initialize components: {e}")
