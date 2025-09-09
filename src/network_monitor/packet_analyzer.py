@@ -26,10 +26,10 @@ class NetworkMonitor:
         self.shutdown_event = shutdown_event
         
         # Configuration
-        self.interfaces = config.get('interfaces', ['eth0'])
+        self.interfaces = config.get("network", {}).get("interfaces", ["\\Device\\NPF_{A9AC6786-50AA-42B0-9B9A-8A580A2E8299}"])
         self.capture_filter = config.get('capture_filter', 'tcp or udp or icmp')
-        self.packet_timeout = config.get('packet_timeout', 10)
-        self.max_packets = config.get('max_packets', 1000)
+        self.packet_timeout = config.get('packet_timeout', 60)
+        self.max_packets = config.get('max_packets', 10000)
         
         # Statistics and tracking
         self.packet_count = 0

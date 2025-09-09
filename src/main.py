@@ -13,7 +13,7 @@ from host_monitor.system_monitor import HostMonitor
 from baseline_engine.behavior_analyzer import BaselineEngine
 from correlation_engine.event_correlator import CorrelationEngine
 from alert_manager.alert_handler import AlertManager
-from web_dashboard.app import create_app
+# from web_dashboard.app import create_app
 from api.server import APIServer
 from utils.config_loader import ConfigLoader
 from utils.logger import setup_logging
@@ -46,7 +46,7 @@ class MultiFactorIDS:
         
         try:
             self.alert_manager = AlertManager(
-                config=self.config.set('alerts', {}),
+                config=self.config.get('alerts', {}),
                 shutdown_event=self.shutdown_event
             )
             
@@ -74,7 +74,7 @@ class MultiFactorIDS:
                 shutdown_event=self.shutdown_event
             )
             
-            self.web_app = create_app(self.config.get('dashboard', {}))
+            # self.web_app = create_app(self.config.get('dashboard', {}))
             
             self.api_server = APIServer(
                 config=self.config.get('api', {}),

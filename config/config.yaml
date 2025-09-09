@@ -1,4 +1,4 @@
-# Multi-Factor IDS Configuration
+# Multi-Factor IDS Configuration for Windows
 
 # Global settings
 global:
@@ -9,12 +9,17 @@ global:
 # Network monitoring
 network:
   interfaces:
-    - eth0
-    - wlan0
-  capture_filter: "tcp or udp or icmp"
+    # Use actual Windows interface names from your system
+    # Based on your log, pick one or more of these:
+    - "\\Device\\NPF_{A9AC6786-50AA-42B0-9B9A-8A580A2E8299}" # Usually WiFi
+    - "\\Device\\NPF_{C8CCE713-A713-42B2-8C4B-3CB746A73658}" # Usually main ethernet 
+    # Or use friendly names if your network monitor supports them:
+    # - "Ethernet"
+    # - "Wi-Fi"
+  capture_filter: ""
   promiscuous_mode: true
-  packet_timeout: 10
-  max_packets: 1000
+  packet_timeout: 60
+  max_packets: 10000
 
 # Host monitoring
 host:
@@ -23,10 +28,14 @@ host:
   monitor_network: true
   scan_interval: 30
   watched_directories:
-    - /etc
-    - /home
-    - /var/log
-    - /usr/local/bin
+    # Windows system directories
+    - "C:\\Windows\\System32"
+    - "C:\\Windows\\SysWOW64"
+    - "C:\\Program Files"
+    - "C:\\Program Files (x86)"
+    - "C:\\Users"
+    - "C:\\ProgramData"
+    - "C:\\Windows\\Temp"
 
 # Baseline engine
 baseline:
@@ -59,9 +68,9 @@ alerts:
     - syslog
   email:
     smtp_server: smtp.gmail.com
-    smtp_port: 587
-    username: alerts@company.com
-    password: your_password
+    smtp_port: 465
+    username: zero.business.hub@gmail.com
+    password: llxv qyoy bjvu xflg
   webhook:
     url: http://your-webhook-url.com/alerts
 
@@ -85,12 +94,14 @@ databases:
 # API settings
 api:
   host: 0.0.0.0
-  port: 5000
+  port: 5001  # Changed from 5000 to avoid conflict
   debug: false
   secret_key: your_secret_key_here
 
-# Dashboard settings
+# Dashboard settings (if you add web dashboard later)
 dashboard:
+  host: 0.0.0.0
+  port: 5000  # Keep dashboard on 5000, API on 5001
   refresh_interval_seconds: 10
   max_displayed_alerts: 100
   charts_history_hours: 24
