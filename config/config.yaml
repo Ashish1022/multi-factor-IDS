@@ -1,0 +1,96 @@
+# Multi-Factor IDS Configuration
+
+# Global settings
+global:
+  log_level: INFO
+  data_retention_days: 90
+  timezone: UTC
+
+# Network monitoring
+network:
+  interfaces:
+    - eth0
+    - wlan0
+  capture_filter: "tcp or udp or icmp"
+  promiscuous_mode: true
+  packet_timeout: 10
+  max_packets: 1000
+
+# Host monitoring
+host:
+  monitor_processes: true
+  monitor_files: true
+  monitor_network: true
+  scan_interval: 30
+  watched_directories:
+    - /etc
+    - /home
+    - /var/log
+    - /usr/local/bin
+
+# Baseline engine
+baseline:
+  learning_period_days: 7
+  update_interval_hours: 24
+  anomaly_threshold: 0.95
+  features:
+    - network_traffic
+    - process_activity
+    - file_access
+    - user_behavior
+
+# Correlation engine
+correlation:
+  time_window_minutes: 5
+  max_events_per_window: 10000
+  correlation_threshold: 0.8
+  rules_file: config/correlation_rules.yaml
+
+# Alerting
+alerts:
+  severity_levels:
+    - LOW
+    - MEDIUM
+    - HIGH
+    - CRITICAL
+  notification_methods:
+    - email
+    - webhook
+    - syslog
+  email:
+    smtp_server: smtp.gmail.com
+    smtp_port: 587
+    username: alerts@company.com
+    password: your_password
+  webhook:
+    url: http://your-webhook-url.com/alerts
+
+# Database connections
+databases:
+  elasticsearch:
+    host: localhost
+    port: 9200
+    index_prefix: ids
+  redis:
+    host: localhost
+    port: 6379
+    db: 0
+  postgres:
+    host: localhost
+    port: 5432
+    database: ids_db
+    username: ids_user
+    password: ids_password
+
+# API settings
+api:
+  host: 0.0.0.0
+  port: 5000
+  debug: false
+  secret_key: your_secret_key_here
+
+# Dashboard settings
+dashboard:
+  refresh_interval_seconds: 10
+  max_displayed_alerts: 100
+  charts_history_hours: 24

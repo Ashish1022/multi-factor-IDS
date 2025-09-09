@@ -1,0 +1,8 @@
+# Development tools
+pytest>=7.1.0
+pytest-cov>=3.0.0
+black>=22.6.0
+flake8>=5.0.0
+mypy>=0.971
+pre-commit>=2.20.0
+sphinx>=5.1.0

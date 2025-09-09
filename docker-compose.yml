@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=ids
+      - RABBITMQ_DEFAULT_PASS=idspassword
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=ids_db
+      - POSTGRES_USER=ids_user
+      - POSTGRES_PASSWORD=ids_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  network-monitor:
+    build:
+      context: .
+      dockerfile: docker/network-monitor.Dockerfile
+    network_mode: host
+    privileged: true
+    depends_on:
+      - elasticsearch
+      - redis
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+
+  host-monitor:
+    build:
+      context: .
+      dockerfile: docker/host-monitor.Dockerfile
+    privileged: true
+    depends_on:
+      - elasticsearch
+      - redis
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+      - /:/host:ro
+
+  correlation-engine:
+    build:
+      context: .
+      dockerfile: docker/correlation-engine.Dockerfile
+    depends_on:
+      - elasticsearch
+      - redis
+      - rabbitmq
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+
+  web-dashboard:
+    build:
+      context: .
+      dockerfile: docker/web-dashboard.Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - elasticsearch
+      - postgres
+    volumes:
+      - ./config:/app/config
+
+volumes:
+  elasticsearch_data:
+  redis_data:
+  rabbitmq_data:
+  postgres_data:
