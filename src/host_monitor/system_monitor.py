@@ -10,6 +10,11 @@ from typing import Dict, Any, Callable, List, Set
 from collections import defaultdict, deque
 from pathlib import Path
 import json
+from api.ws_server import WebSocketServer
+import asyncio
+
+ws_server = WebSocketServer()
+ws_server.start()
 
 # File monitoring
 try:
